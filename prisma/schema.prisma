@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String   @unique
+  password String 
+  name    String?
+  role   Role @default(CUSTOMER)
+  ticketsAssigned String[]
+  ticketsCreated String[]
+}
+
+model Ticket {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  description String
+  ticketPriority Int @default(4)
+  status Status @default(OPEN)
+  assignee String // email of the user who is assigning the ticket
+  assignedTo String // email of the user to whom the ticket is assigned
+  clientName String @default("SYSTEM")
+  createdBy String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now())
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  ON_HOLD
+  CANCELLED
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+  ENGINEER
+}
+
