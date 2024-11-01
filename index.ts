@@ -15,14 +15,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
 
 // Serve static files from the "dist" directory
-app.use(express.static(path.join(__dirname, "dist")));
+app.use(express.static(path.join(__dirname, "frontend_dist")));
 
 // API routes
 app.use("/api", apiRouter);
 
 // Fallback route to serve React app's index.html for any unknown routes
 app.get("*", (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "frontend_dist", "index.html"));
 });
 
 app.get("/", (req: Request, res: Response) => {
