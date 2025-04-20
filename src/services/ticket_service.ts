@@ -87,6 +87,26 @@ class TicketService {
         id,
         ticketDetails
       );
+
+      // Use the updated ticket's status for notification, not the DTO's status
+      if (
+        response.status === "RESOLVED" ||
+        response.status === "CANCELLED"
+      ) {
+        // Notify the ticket creator
+        const creator = await this.userRepository.getUserByEmail(ticket.createdBy);
+        if (creator) {
+          await ticketMailer(
+            creator.email,
+            response.id,
+            response.title,
+            response.description,
+            creator.name,
+            response.status // pass the actual status from the updated ticket
+          );
+        }
+      }
+
       return response;
     } catch (error) {
       console.log(error);

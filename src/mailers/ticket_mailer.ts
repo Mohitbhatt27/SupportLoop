@@ -6,26 +6,39 @@ export default async function ticketMailer(
   ticketId: string,
   ticketTitle: string,
   ticketDescription: string,
-  userName: string | null
+  userName: string | null,
+  status?: string // optional status
 ) {
+  console.log("Sending email to:", ReceiverEmail);
+  console.log("status", status);
   try {
+    // Determine the message based on status
+    let statusMessage = "";
+    if (status === "RESOLVED") {
+      statusMessage = "Your support ticket has been resolved.";
+    } else if (status === "CANCELLED") {
+      statusMessage = "Your support ticket has been cancelled.";
+    } else {
+      statusMessage = "We have received your support ticket.";
+    }
+
     const response = await mailsender.sendMail({
       from: CONFIG.GMAIL_EMAIL,
       to: `${ReceiverEmail}`,
       text: `Hello ${
         userName ? userName : "User"
-      },\n\nWe have received your support ticket. Here are the details:\n\nTicket ID: ${ticketId}\nTitle: ${ticketTitle}\nDescription: ${ticketDescription}\n\nOur support team will review your ticket and get back to you as soon as possible.\n\nThank you for reaching out to us!\n\nBest regards,\nYour Company Name Support Team`,
-      subject: `Your Support Ticket [#${ticketId}] Has Been Created`,
+      },\n\n${statusMessage} Here are the details:\n\nTicket ID: ${ticketId}\nTitle: ${ticketTitle}\nDescription: ${ticketDescription}\n\nOur support team will review your ticket and get back to you as soon as possible.\n\nThank you for reaching out to us!\n\nBest regards,\nCRM APP Support Team`,
+      subject: `Your Support Ticket [#${ticketId}] ${status === "RESOLVED" ? "Resolved" : status === "CANCELLED" ? "Cancelled" : "Has Been Created"}`,
       html: `
             <!DOCTYPE html>
             <html>
             <head>
                 <meta charset="UTF-8">
-                <title>Your Support Ticket Has Been Created</title>
+                <title>Your Support Ticket Update</title>
             </head>
             <body>
-                <p>Hello ${userName},</p>
-                <p>We have received your support ticket. Here are the details:</p>
+                <p>Hello ${userName ? userName : "User"},</p>
+                <p>${statusMessage} Here are the details:</p>
                 <table border="1" cellpadding="10" cellspacing="0">
                     <tr>
                         <th>Ticket ID</th>

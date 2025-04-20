@@ -30,6 +30,10 @@ class UpdateTicketDto {
   @IsOptional()
   @IsString()
   clientName?: string;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
 }
 
 export default UpdateTicketDto;

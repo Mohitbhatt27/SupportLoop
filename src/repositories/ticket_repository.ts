@@ -1,4 +1,4 @@
-import { PrismaClient, Ticket } from "@prisma/client";
+import { PrismaClient, Ticket, Status } from "@prisma/client";
 import createTicketDto from "../dtos/createTicket_DTO";
 import UpdateTicketDto from "../dtos/updateTicket_DTO";
 
@@ -41,13 +41,16 @@ class TicketRepository {
     id: string,
     ticketDetails: UpdateTicketDto
   ): Promise<Ticket> {
+    // Convert status string to enum if present
+    const data: any = { ...ticketDetails };
+    if (data.status && typeof data.status === "string") {
+      data.status = Status[data.status as keyof typeof Status];
+    }
     const response: Ticket = await prisma.ticket.update({
       where: {
         id,
       },
-      data: {
-        ...ticketDetails,
-      },
+      data,
     });
     return response;
   }
