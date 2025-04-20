@@ -60,8 +60,13 @@ export default async function ticketMailer(
             </html>
         `,
     });
-    console.log(response);
+    // Only log in non-test environments to avoid Jest open handle issues
+    if (process.env.NODE_ENV !== "test") {
+      console.log(response);
+    }
   } catch (error) {
-    console.log(error);
+    if (process.env.NODE_ENV !== "test") {
+      console.log(error);
+    }
   }
 }
