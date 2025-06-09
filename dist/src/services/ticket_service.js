@@ -61,6 +61,16 @@ class TicketService {
                     throw new unauthorisedError_1.default();
                 }
                 const response = yield this.ticketRepository.updateTicket(id, ticketDetails);
+                // Use the updated ticket's status for notification, not the DTO's status
+                if (response.status === "RESOLVED" ||
+                    response.status === "CANCELLED") {
+                    // Notify the ticket creator
+                    const creator = yield this.userRepository.getUserByEmail(ticket.createdBy);
+                    if (creator) {
+                        yield (0, ticket_mailer_1.default)(creator.email, response.id, response.title, response.description, creator.name, response.status // pass the actual status from the updated ticket
+                        );
+                    }
+                }
                 return response;
             }
             catch (error) {

@@ -12,27 +12,40 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ticketMailer;
 const email_config_1 = __importDefault(require("../config/email_config"));
 const server_config_1 = __importDefault(require("../config/server_config"));
-function ticketMailer(ReceiverEmail, ticketId, ticketTitle, ticketDescription, userName) {
+function ticketMailer(ReceiverEmail, ticketId, ticketTitle, ticketDescription, userName, status // optional status
+) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log("Sending email to:", ReceiverEmail);
+        console.log("status", status);
         try {
+            // Determine the message based on status
+            let statusMessage = "";
+            if (status === "RESOLVED") {
+                statusMessage = "Your support ticket has been resolved.";
+            }
+            else if (status === "CANCELLED") {
+                statusMessage = "Your support ticket has been cancelled.";
+            }
+            else {
+                statusMessage = "We have received your support ticket.";
+            }
             const response = yield email_config_1.default.sendMail({
                 from: server_config_1.default.GMAIL_EMAIL,
                 to: `${ReceiverEmail}`,
-                text: `Hello ${userName ? userName : "User"},\n\nWe have received your support ticket. Here are the details:\n\nTicket ID: ${ticketId}\nTitle: ${ticketTitle}\nDescription: ${ticketDescription}\n\nOur support team will review your ticket and get back to you as soon as possible.\n\nThank you for reaching out to us!\n\nBest regards,\nYour Company Name Support Team`,
-                subject: `Your Support Ticket [#${ticketId}] Has Been Created`,
+                text: `Hello ${userName ? userName : "User"},\n\n${statusMessage} Here are the details:\n\nTicket ID: ${ticketId}\nTitle: ${ticketTitle}\nDescription: ${ticketDescription}\n\nOur support team will review your ticket and get back to you as soon as possible.\n\nThank you for reaching out to us!\n\nBest regards,\nCRM APP Support Team`,
+                subject: `Your Support Ticket [#${ticketId}] ${status === "RESOLVED" ? "Resolved" : status === "CANCELLED" ? "Cancelled" : "Has Been Created"}`,
                 html: `
             <!DOCTYPE html>
             <html>
             <head>
                 <meta charset="UTF-8">
-                <title>Your Support Ticket Has Been Created</title>
+                <title>Your Support Ticket Update</title>
             </head>
             <body>
-                <p>Hello ${userName},</p>
-                <p>We have received your support ticket. Here are the details:</p>
+                <p>Hello ${userName ? userName : "User"},</p>
+                <p>${statusMessage} Here are the details:</p>
                 <table border="1" cellpadding="10" cellspacing="0">
                     <tr>
                         <th>Ticket ID</th>
@@ -54,10 +67,16 @@ function ticketMailer(ReceiverEmail, ticketId, ticketTitle, ticketDescription, u
             </html>
         `,
             });
-            console.log(response);
+            // Only log in non-test environments to avoid Jest open handle issues
+            if (process.env.NODE_ENV !== "test") {
+                console.log(response);
+            }
         }
         catch (error) {
-            console.log(error);
+            if (process.env.NODE_ENV !== "test") {
+                console.log(error);
+            }
         }
     });
 }
+exports.default = ticketMailer;

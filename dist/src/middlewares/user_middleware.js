@@ -12,8 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUserMiddleware = createUserMiddleware;
-exports.signInValidator = signInValidator;
+exports.signInValidator = exports.createUserMiddleware = void 0;
 const createUser_DTO_1 = __importDefault(require("../dtos/createUser_DTO"));
 const class_validator_1 = require("class-validator");
 const http_status_codes_1 = require("http-status-codes");
@@ -40,6 +39,7 @@ function createUserMiddleware(req, res, next) {
         next();
     });
 }
+exports.createUserMiddleware = createUserMiddleware;
 function signInValidator(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const incomingRequestBody = new signinUser_DTO_1.default(req.body.email, req.body.password);
@@ -61,3 +61,4 @@ function signInValidator(req, res, next) {
         next();
     });
 }
+exports.signInValidator = signInValidator;

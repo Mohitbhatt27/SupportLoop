@@ -39,4 +39,8 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)()
 ], UpdateTicketDto.prototype, "clientName", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)()
+], UpdateTicketDto.prototype, "status", void 0);
 exports.default = UpdateTicketDto;

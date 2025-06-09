@@ -3,10 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isLoggedIn = isLoggedIn;
-exports.isAdmin = isAdmin;
-exports.isEngineer = isEngineer;
-exports.isEngineerOrAdmin = isEngineerOrAdmin;
+exports.isEngineerOrAdmin = exports.isEngineer = exports.isAdmin = exports.isLoggedIn = void 0;
 const unauthorisedError_1 = __importDefault(require("../errors/unauthorisedError"));
 const http_status_codes_1 = require("http-status-codes");
 const auth_1 = require("../utils/auth");
@@ -35,6 +32,7 @@ function isLoggedIn(req, res, next) {
     }
     next();
 }
+exports.isLoggedIn = isLoggedIn;
 function isAdmin(req, res, next) {
     try {
         const roles = req.user.role;
@@ -55,6 +53,7 @@ function isAdmin(req, res, next) {
         });
     }
 }
+exports.isAdmin = isAdmin;
 function isEngineer(req, res, next) {
     try {
         const roles = req.user.role;
@@ -74,6 +73,7 @@ function isEngineer(req, res, next) {
         });
     }
 }
+exports.isEngineer = isEngineer;
 function isEngineerOrAdmin(req, res, next) {
     try {
         const roles = req.user.role;
@@ -93,3 +93,4 @@ function isEngineerOrAdmin(req, res, next) {
         });
     }
 }
+exports.isEngineerOrAdmin = isEngineerOrAdmin;

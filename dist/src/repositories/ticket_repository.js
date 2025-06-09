@@ -48,11 +48,16 @@ class TicketRepository {
     }
     updateTicket(id, ticketDetails) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Convert status string to enum if present
+            const data = Object.assign({}, ticketDetails);
+            if (data.status && typeof data.status === "string") {
+                data.status = client_1.Status[data.status];
+            }
             const response = yield prisma.ticket.update({
                 where: {
                     id,
                 },
-                data: Object.assign({}, ticketDetails),
+                data,
             });
             return response;
         });
